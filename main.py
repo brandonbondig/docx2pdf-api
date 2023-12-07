@@ -43,4 +43,4 @@ async def convert_doc_to_pdf(file: UploadFile = File(...)):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8080)
+    uvicorn.run(app, host='0.0.0.0')
