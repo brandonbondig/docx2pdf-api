@@ -21,8 +21,6 @@ app.add_middleware(
 )
 
 # The rest of your code...
-
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -33,6 +31,8 @@ async def convert_doc_to_pdf(file: UploadFile = File(...)):
 
     with open(file.filename, "wb") as buffer:
         buffer.write(file.file.read())
+
+        print(buffer)
 
     output_filename = file.filename
     subprocess.run(['soffice', '--headless', '--convert-to', 'pdf', file.filename])
