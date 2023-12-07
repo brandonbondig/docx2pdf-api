@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
+import uvicorn
 import os
 
 app = FastAPI()
@@ -25,3 +26,7 @@ async def convert_doc_to_pdf(file: UploadFile = File(...)):
     output_filename = output_filename.replace(".docx", ".pdf")
 
     return FileResponse(path=output_filename, filename=output_filename)
+
+
+if __name__ == '__main__':
+    uvicorn.run(app, port=8080, host='0.0.0.0')
