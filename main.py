@@ -6,6 +6,13 @@ import os
 
 app = FastAPI()
 
+#standard get
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
 @app.post("/convert/")
 async def convert_doc_to_pdf(file: UploadFile = File(...)):
 
