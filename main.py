@@ -1,13 +1,10 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import uvicorn
 import os
-
-app = FastAPI()
-
-#standard get
+import shutil
 
 app = FastAPI()
 
@@ -20,27 +17,29 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# The rest of your code...
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-
 @app.post("/convert/")
-async def convert_doc_to_pdf(file: UploadFile = File(...)):
+async def convert_doc_to_pdf(doc_file: UploadFile = File(...)):
+    # Generate unique filenames for input and output
+    input_filename = f"input_{os.urandom(6).hex()}.docx"
+    output_filename = input_filename.replace(".docx", ".pdf")
 
-    with open(file.filename, "wb") as buffer:
-        buffer.write(file.file.read())
+    # Save the uploaded DOCX file
+    with open(input_filename, "wb") as file:
+        shutil.copyfileobj(doc_file.file, file)
 
-        print(buffer)
+    # Convert the file to PDF
+    subprocess.run(['soffice', '--headless', '--convert-to', 'pdf', input_filename])
 
-    output_filename = file.filename
-    subprocess.run(['soffice', '--headless', '--convert-to', 'pdf', file.filename])
+    # Remove the input file after conversion
+    if os.path.exists(input_filename):
+        os.remove(input_filename)
 
-    output_filename = output_filename.replace(".docx", ".pdf")
-
+    # Return the converted file
     return FileResponse(path=output_filename, filename=output_filename)
-
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0')
