@@ -20,6 +20,7 @@ app.add_middleware(
 
 @app.post("/convert/")
 async def convert_doc_to_pdf(doc_file: UploadFile = File(...)):
+    
     # Generate unique filenames for input and output
     input_filename = f"input_{os.urandom(6).hex()}.docx"
     output_filename = input_filename.replace(".docx", ".pdf")
