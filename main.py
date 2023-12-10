@@ -1,10 +1,12 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
-import subprocess
-import uvicorn
+
 import os
 import shutil
+import subprocess
+import uvicorn
+
 
 app = FastAPI()
 
@@ -17,9 +19,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+
 
 @app.post("/convert/")
 async def convert_doc_to_pdf(doc_file: UploadFile = File(...)):
@@ -35,11 +35,20 @@ async def convert_doc_to_pdf(doc_file: UploadFile = File(...)):
     subprocess.run(['soffice', '--headless', '--convert-to', 'pdf', input_filename])
 
     # Remove the input file after conversion
-    if os.path.exists(input_filename):
-        os.remove(input_filename)
+    os.remove(input_filename)
 
-    # Return the converted file
-    return FileResponse(path=output_filename, filename=output_filename)
+    # Read the PDF into memory
+    with open(output_filename, 'rb') as file:
+        pdf_content = file.read()
+    
+    try:
+        os.remove(output_filename)
+    except OSError as e:
+        print(f"Error: {e.strerror}")
+
+
+    # Return the PDF content as a response
+    return Response(content=pdf_content, media_type='application/pdf')
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0')
