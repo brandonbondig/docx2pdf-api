@@ -50,8 +50,5 @@ with open('output.pdf', 'wb') as f:
 ## Error Handling
 - The API handles file-related errors and ensures the temporary files are cleaned up after conversion.
 
-## Security Notes
-- This API does not implement authentication or encryption. Consider adding these features for production use.
-
 ## Limitations
 - The API currently only supports DOCX to PDF conversion.
