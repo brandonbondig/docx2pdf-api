@@ -55,10 +55,3 @@ with open('output.pdf', 'wb') as f:
 
 ## Limitations
 - The API currently only supports DOCX to PDF conversion.
-
-## Contribution
-Contributions to the project are welcome. Please follow standard GitHub pull request procedures for contributions.
-
----
-
-Feel free to modify or extend this readme as needed for your application's documentation.
